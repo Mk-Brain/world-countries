@@ -23,8 +23,14 @@ const Card = ({country}: {country : country}) =>{
         <Container>
             <CountiyInfo>
                 <p>{fra.common}</p>
-                {/*country.capitale.map((item)=>(<p>{item}</p>))*/}
+               
+                    {country.capital.map((item)=>{
+                        return <p>{item}</p>
+                    })
+                }
+             
                 <p>{country.region}</p>
+                <p>{country.population.toLocaleString()}</p>
             </CountiyInfo>
             <FlagCountry src={svg} alt="erreur" />
         </Container>
