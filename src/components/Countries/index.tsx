@@ -19,19 +19,25 @@ export type country = {
 
 const FilterListContaiuner = styled.ul`
     display: flex;
+    flex-direction: raw;
     justify-content: space-around;
     background-color: ${colors.secondary};
     border-radius: 12px;
     color: ${colors.primary};
     & input{
         cursor: pointer;
-    }
+    };
+    height: 50px;
 `
 
 const CountriesContainer = styled.div`
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+`
+const Title = styled.h2`
+    margin: 0px;
+    padding: 0px;
 `
 
 const regions = ["Africa", "Europe", "Asia", "Americas", "Oceania"]
@@ -46,7 +52,7 @@ const Countries = () =>{
     
     return (
         <div>
-            <h1>Filtrer</h1>
+            <Title>Filtrer</Title>
             <FilterListContaiuner>
                 <input type="range" min={1} max={250} defaultValue={100} onChange={(e)=>{
                     setrangeValue(Number(e.target.value))
@@ -75,45 +81,56 @@ const Countries = () =>{
                 }                
             </FilterListContaiuner>
 
-            <h1>Tier par</h1>
+            <Title>Tier par</Title>
             <FilterListContaiuner>
-                <input type="radio" name='population' 
-                checked={sortBy == 1}
-                onClick={()=>{
-                    if (sortBy == 1)
-                        setsortBy(0)
-                    else
-                        setsortBy(1)
-                }}/>
-                <label htmlFor="population">population(ordre croissant)</label>
-                <input type="radio" name='population' 
-                checked={sortBy == 2}
-                onClick={()=>{
-                    if (sortBy == 2)
-                        setsortBy(0)
-                    else
-                        setsortBy(2)
-                }}/>
-                <label htmlFor="population">population(ordre dévroissant)</label>
-
-                <input type="radio" name='nom' 
-                checked={sortBy == 3}
-                onClick={()=>{
-                    if (sortBy == 3)
-                        setsortBy(0)
-                    else
-                        setsortBy(3)
-                }}/>
-                <label htmlFor="nom">Nom(A-Z)</label>
-                <input type="radio" name='nom' 
-                checked={sortBy == 4}
-                onClick={()=>{
-                    if (sortBy == 4)
-                        setsortBy(0)
-                    else
-                        setsortBy(4)
-                }}/>
-                <label htmlFor="nom">Nom(Z-A)</label>
+                <p>
+                    <input type="radio" name='population' 
+                    checked={sortBy == 1}
+                    onClick={()=>{
+                        if (sortBy == 1)
+                            setsortBy(0)
+                        else
+                            setsortBy(1)
+                    }}/>
+                    <label htmlFor="population">Population(ordre croissant)</label>
+                </p>
+                
+                <p>
+                    <input type="radio" name='population' 
+                    checked={sortBy == 2}
+                    onClick={()=>{
+                        if (sortBy == 2)
+                            setsortBy(0)
+                        else
+                            setsortBy(2)
+                    }}/>
+                    <label htmlFor="population">Population(ordre dévroissant)</label>
+                </p>
+                
+                <p>
+                    <input type="radio" name='nom' 
+                    checked={sortBy == 3}
+                    onClick={()=>{
+                        if (sortBy == 3)
+                            setsortBy(0)
+                        else
+                            setsortBy(3)
+                    }}/>
+                    <label htmlFor="nom">Nom(A-Z)</label>
+                </p>
+                
+                <p>
+                    <input type="radio" name='nom' 
+                    checked={sortBy == 4}
+                    onClick={()=>{
+                        if (sortBy == 4)
+                            setsortBy(0)
+                        else
+                            setsortBy(4)
+                    }}/>
+                    <label htmlFor="nom">Nom(Z-A)</label>
+                </p>
+                
             </FilterListContaiuner>
             
             <CountriesContainer>
