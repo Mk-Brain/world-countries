@@ -6,7 +6,11 @@ import colors from '../../utils/colors';
 
 
 export type country = {
-    translations: object
+    translations: {
+        fra: {
+            common: string
+        }
+    }
     flags: object
     population: number
     capital: []
@@ -36,10 +40,13 @@ const Countries = () =>{
     const {isLoading, countries} = useFetch(`https://restcountries.com/v3.1/all?fields=idd,translations,capital,flags,region,population`)
     const [rangeValue, setrangeValue] = useState(250)
     const [selectedRadio, setselectedRadio] = useState('')
-    const [filterByPopulation, setfilterByPopulation] = useState(false)
+    const [sortBy, setsortBy] = useState(0)
     //console.log(countries)
+    console.log(sortBy);
+    
     return (
         <div>
+            <h1>Filtrer</h1>
             <FilterListContaiuner>
                 <input type="range" min={1} max={250} defaultValue={100} onChange={(e)=>{
                     setrangeValue(Number(e.target.value))
@@ -65,9 +72,48 @@ const Countries = () =>{
                             <label htmlFor={item}>{item}</label>
                         </p>
                     })
-                }
-                
-                
+                }                
+            </FilterListContaiuner>
+
+            <h1>Tier par</h1>
+            <FilterListContaiuner>
+                <input type="radio" name='population' 
+                checked={sortBy == 1}
+                onClick={()=>{
+                    if (sortBy == 1)
+                        setsortBy(0)
+                    else
+                        setsortBy(1)
+                }}/>
+                <label htmlFor="population">population(ordre croissant)</label>
+                <input type="radio" name='population' 
+                checked={sortBy == 2}
+                onClick={()=>{
+                    if (sortBy == 2)
+                        setsortBy(0)
+                    else
+                        setsortBy(2)
+                }}/>
+                <label htmlFor="population">population(ordre dévroissant)</label>
+
+                <input type="radio" name='nom' 
+                checked={sortBy == 3}
+                onClick={()=>{
+                    if (sortBy == 3)
+                        setsortBy(0)
+                    else
+                        setsortBy(3)
+                }}/>
+                <label htmlFor="nom">Nom(A-Z)</label>
+                <input type="radio" name='nom' 
+                checked={sortBy == 4}
+                onClick={()=>{
+                    if (sortBy == 4)
+                        setsortBy(0)
+                    else
+                        setsortBy(4)
+                }}/>
+                <label htmlFor="nom">Nom(Z-A)</label>
             </FilterListContaiuner>
             
             <CountriesContainer>
@@ -75,7 +121,10 @@ const Countries = () =>{
                 countries
                 .slice(0, rangeValue)
                 .filter((item : country)=>selectedRadio ? item.region === selectedRadio : true)
-                .sort((a : country, b : country)=>filterByPopulation ? a.population - b.population : 0)
+                .sort((a : country, b : country)=>sortBy == 1 ? a.population - b.population : 0)
+                .sort((a : country, b : country)=>sortBy == 2 ? b.population - a.population : 0)
+                .sort((a : country, b : country)=>sortBy == 3 ? a.translations.fra.common.localeCompare(b.translations.fra.common)  : 0)
+                .sort((a : country, b : country)=>sortBy == 4 ? b.translations.fra.common.localeCompare(a.translations.fra.common)  : 0)
                 .map((country : country, index)=>(
                     <Card key={index} country={country}/>
                 ))
