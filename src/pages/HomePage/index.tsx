@@ -1,12 +1,18 @@
+import styled from "styled-components"
 import Countries from "../../components/Countries"
+import Logo from "../../components/Logo"
+
+const Container = styled.div`
+    width: 80%;
+    margin: 0 auto
+`
 
 const HomePage = () =>{
     return(
-        <>
-        <h1>hello world</h1>
-        
+        <Container>
+        <Logo/>
         <Countries/>
-        </>
+        </Container>
     )
 }
 
