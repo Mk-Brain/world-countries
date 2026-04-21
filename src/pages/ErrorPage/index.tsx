@@ -8,7 +8,7 @@ const ErrorImg = styled.img`
 `
 
 const Container = styled.div`
-    align-content: center;
+    margin: 10%;
     width: 80%;
     background-color: ${colors.backgoundlight};
     padding: 20px;
@@ -19,8 +19,11 @@ const Container = styled.div`
 const ErrorPage = ()=>{
     return(
         <Container>
-            <h1>Erreur 😥😥😥! Page no trouvée.</h1>
-            <ErrorImg src={Imgage}/>
+            <h1>Erreur 😥😥😥! Page non trouvée.</h1>
+            <div>
+                <ErrorImg src={Imgage}/>
+            </div>
+            
         </Container>
     )
 }

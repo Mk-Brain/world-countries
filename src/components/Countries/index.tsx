@@ -26,6 +26,7 @@ export type country = {
     }
     idd : {
         root: string
+        suffixes: []
     }
     area: number
     maps : {
@@ -64,7 +65,7 @@ const Countries = () =>{
     const [rangeValue, setrangeValue] = useState(250)
     const [selectedRadio, setselectedRadio] = useState('')
     const [sortBy, setsortBy] = useState(0)
-    console.log(countries)
+    //console.log(countries)
     
     
     return (

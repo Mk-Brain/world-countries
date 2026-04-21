@@ -112,8 +112,14 @@ const Card = ({country}: {country : country}) =>{
                 <p><strong>Population : </strong>{country.population.toLocaleString()} habitants</p>
                 <p><strong>Continent :</strong>{country.region}</p>
                 <p><strong>Habitants: </strong>{country.demonyms.fra.f}</p>
-                <p><strong>superficie: </strong>{country.area } km²</p>
-                <p><strong>Code téléphonique: </strong>{country.idd.root}</p>
+                <p><strong>superficie: </strong>{country.area.toLocaleString()} km²</p>
+                <p><strong>Code téléphonique: </strong>
+                {
+                    country.idd.suffixes.reduce(
+                        (acc: string[], currentVal: string) =>{
+                           acc.push(`${country.idd.root}${currentVal}`)
+                           return acc
+                }, []).join(", ")}</p>
                 <p><strong>Langues officielles: </strong>{Object.values(country.languages).join(',')}</p>
                 <Link style={
                     {
