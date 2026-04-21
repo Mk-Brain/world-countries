@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import useFetch from "../../utils/useFetch"
 import Card from "../Card"
 import styled from 'styled-components';
 import colors from '../../utils/colors';
+import { Loader } from '../Loader';
+
 
 
 export type country = {
@@ -11,10 +13,25 @@ export type country = {
             common: string
         }
     }
-    flags: object
+    flags: {
+        svg: string
+    }
     population: number
     capital: []
     region: string
+    demonyms : {
+        fra : {
+            f: string
+        }
+    }
+    idd : {
+        root: string
+    }
+    area: number
+    maps : {
+        googleMaps: string
+    }
+    languages : object
 }
 
 const FilterListContaiuner = styled.ul`
@@ -43,20 +60,23 @@ const Title = styled.h2`
 const regions = ["Africa", "Europe", "Asia", "Americas", "Oceania"]
 
 const Countries = () =>{
-    const {isLoading, countries} = useFetch(`https://restcountries.com/v3.1/all?fields=idd,translations,capital,flags,region,population`)
+    const {isLoading, countries} = useFetch(`https://restcountries.com/v3.1/all?fields=maps,translations,capital,area,flags,region,languages,population,idd,demonyms`)
     const [rangeValue, setrangeValue] = useState(250)
     const [selectedRadio, setselectedRadio] = useState('')
     const [sortBy, setsortBy] = useState(0)
-    //console.log(countries)
-    console.log(sortBy);
+    console.log(countries)
+    
     
     return (
         <div>
             <Title>Filtrer</Title>
             <FilterListContaiuner>
-                <input type="range" min={1} max={250} defaultValue={100} onChange={(e)=>{
+                <p>
+                    <label htmlFor="">{rangeValue}</label>
+                    <input type="range" min={1} max={250}  defaultValue={100} onChange={(e)=>{
                     setrangeValue(Number(e.target.value))
                 }}/>
+                </p>
                 {
                     regions.map((item)=>{
                         return <p>
@@ -72,8 +92,6 @@ const Countries = () =>{
                                 else {
                                     setselectedRadio(e.target.value) 
                                 }
-                                
-                                
                             }}/>
                             <label htmlFor={item}>{item}</label>
                         </p>
@@ -134,18 +152,19 @@ const Countries = () =>{
             </FilterListContaiuner>
             
             <CountriesContainer>
-                {
+                {isLoading ? <Loader/> : 
                 countries
-                .slice(0, rangeValue)
                 .filter((item : country)=>selectedRadio ? item.region === selectedRadio : true)
                 .sort((a : country, b : country)=>sortBy == 1 ? a.population - b.population : 0)
                 .sort((a : country, b : country)=>sortBy == 2 ? b.population - a.population : 0)
                 .sort((a : country, b : country)=>sortBy == 3 ? a.translations.fra.common.localeCompare(b.translations.fra.common)  : 0)
                 .sort((a : country, b : country)=>sortBy == 4 ? b.translations.fra.common.localeCompare(a.translations.fra.common)  : 0)
+                .slice(0, rangeValue)
                 .map((country : country, index)=>(
                     <Card key={index} country={country}/>
                 ))
             }
+            
             </CountriesContainer>
             
         </div>

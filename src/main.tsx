@@ -6,6 +6,7 @@ import ErrorPage from './pages/ErrorPage'
 
 
 
+
 const root = document.getElementById('root') 
 
 ReactDOM.createRoot(root!).render(
