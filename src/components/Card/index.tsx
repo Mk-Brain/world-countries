@@ -1,8 +1,9 @@
 import { useRef } from "react"
-import type { country } from "../Countries"
+import type { country } from "../../utils/type"
 import styled from "styled-components"
 import colors from "../../utils/colors"
 import { Link } from "react-router-dom"
+
 const Container = styled.div`
     height: 120px;
     width: 180px;

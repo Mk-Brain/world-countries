@@ -1,40 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useFetch from "../../utils/useFetch"
 import Card from "../Card"
 import styled from 'styled-components';
 import colors from '../../utils/colors';
 import { Loader } from '../Loader';
+import type { country } from '../../utils/type';
 
-
-
-
-export type country = {
-    translations: {
-        fra: {
-            common: string
-        }
-    }
-    flags: {
-        svg: string
-    }
-    population: number
-    capital: []
-    region: string
-    demonyms : {
-        fra : {
-            f: string
-        }
-    }
-    idd : {
-        root: string
-        suffixes: []
-    }
-    area: number
-    maps : {
-        googleMaps: string
-    }
-    languages : object
-}
 
 const FilterListContaiuner = styled.ul`
     display: flex;
@@ -80,6 +51,22 @@ const Countries = () =>{
     const [selectedRadio, setselectedRadio] = useState('')
     const [sortBy, setsortBy] = useState(0)
     const [searchValue, setSearchValue] = useState("")
+    const [allCountries, setAllCountries] = useState<country[]>([])
+
+    useEffect(()=>{
+        function applyFilter(){
+            const filtered = countries.filter((item : country)=>selectedRadio ? item.region === selectedRadio : true)
+                .slice(0, rangeValue)
+                .filter((item: country)=>searchValue ? item.translations.fra.common.toLowerCase().includes(searchValue.toLowerCase()) : true)
+                .sort((a : country, b : country)=>sortBy == 1 ? a.population - b.population : 0)
+                .sort((a : country, b : country)=>sortBy == 2 ? b.population - a.population : 0)
+                .sort((a : country, b : country)=>sortBy == 3 ? a.translations.fra.common.localeCompare(b.translations.fra.common)  : 0)
+                .sort((a : country, b : country)=>sortBy == 4 ? b.translations.fra.common.localeCompare(a.translations.fra.common)  : 0)
+            setAllCountries(filtered)
+        }
+        applyFilter()
+    },[selectedRadio, sortBy, rangeValue, searchValue, countries])
+
     //console.log(countries)
     function handleClick(e: React.MouseEvent<HTMLInputElement>){
         if (selectedRadio === e.currentTarget.value) {
@@ -180,16 +167,7 @@ const Countries = () =>{
             
             <CountriesContainer>
                 {isLoading ? <Loader/> : 
-                countries
-                .filter((item : country)=>selectedRadio ? item.region === selectedRadio : true)
-                
-                .slice(0, rangeValue)
-                .filter((item: country)=>searchValue ? item.translations.fra.common.toLowerCase().includes(searchValue.toLowerCase()) : true)
-                .sort((a : country, b : country)=>sortBy == 1 ? a.population - b.population : 0)
-                .sort((a : country, b : country)=>sortBy == 2 ? b.population - a.population : 0)
-                .sort((a : country, b : country)=>sortBy == 3 ? a.translations.fra.common.localeCompare(b.translations.fra.common)  : 0)
-                .sort((a : country, b : country)=>sortBy == 4 ? b.translations.fra.common.localeCompare(a.translations.fra.common)  : 0)
-                .map((country : country, index)=>(
+                allCountries.map((country : country, index)=>(
                     <Card key={index} country={country}/>
                 ))
             }
