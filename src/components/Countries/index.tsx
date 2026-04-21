@@ -7,6 +7,7 @@ import { Loader } from '../Loader';
 
 
 
+
 export type country = {
     translations: {
         fra: {
@@ -46,6 +47,7 @@ const FilterListContaiuner = styled.ul`
         cursor: pointer;
     };
     height: 50px;
+    
 `
 
 const CountriesContainer = styled.div`
@@ -58,6 +60,18 @@ const Title = styled.h2`
     padding: 0px;
 `
 
+const SearcheBar = styled.input`
+    height: 30px;
+    width: 220px;
+    border-radius: 50px;
+    margin-bottom: 6px;
+`
+const SearcheBarontainer = styled.p`
+    position: relative;
+    height: 100%;
+    margin: 6px;
+`
+
 const regions = ["Africa", "Europe", "Asia", "Americas", "Oceania"]
 
 const Countries = () =>{
@@ -65,6 +79,7 @@ const Countries = () =>{
     const [rangeValue, setrangeValue] = useState(250)
     const [selectedRadio, setselectedRadio] = useState('')
     const [sortBy, setsortBy] = useState(0)
+    const [searchValue, setSearchValue] = useState("")
     //console.log(countries)
     function handleClick(e: React.MouseEvent<HTMLInputElement>){
         if (selectedRadio === e.currentTarget.value) {
@@ -151,18 +166,29 @@ const Countries = () =>{
                     }}/>
                     <label htmlFor="nom">Nom(Z-A)</label>
                 </p>
-                
+                <SearcheBarontainer>
+                    <label htmlFor="">Rechercher</label>
+                    <SearcheBar 
+                    type="text" 
+                    value={searchValue} 
+                    onChange={(e)=>{
+                        console.log(e.target.value)
+                        setSearchValue(e.target.value)
+                    }}/>
+                </SearcheBarontainer>
             </FilterListContaiuner>
             
             <CountriesContainer>
                 {isLoading ? <Loader/> : 
                 countries
                 .filter((item : country)=>selectedRadio ? item.region === selectedRadio : true)
+                
+                .slice(0, rangeValue)
+                .filter((item: country)=>searchValue ? item.translations.fra.common.toLowerCase().includes(searchValue.toLowerCase()) : true)
                 .sort((a : country, b : country)=>sortBy == 1 ? a.population - b.population : 0)
                 .sort((a : country, b : country)=>sortBy == 2 ? b.population - a.population : 0)
                 .sort((a : country, b : country)=>sortBy == 3 ? a.translations.fra.common.localeCompare(b.translations.fra.common)  : 0)
                 .sort((a : country, b : country)=>sortBy == 4 ? b.translations.fra.common.localeCompare(a.translations.fra.common)  : 0)
-                .slice(0, rangeValue)
                 .map((country : country, index)=>(
                     <Card key={index} country={country}/>
                 ))
