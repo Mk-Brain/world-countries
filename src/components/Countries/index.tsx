@@ -66,7 +66,14 @@ const Countries = () =>{
     const [selectedRadio, setselectedRadio] = useState('')
     const [sortBy, setsortBy] = useState(0)
     //console.log(countries)
-    
+    function handleClick(e: React.MouseEvent<HTMLInputElement>){
+        if (selectedRadio === e.currentTarget.value) {
+            setselectedRadio("");
+        }
+        else {
+            setselectedRadio(e.currentTarget.value);
+        }
+    }
     
     return (
         <div>
@@ -87,12 +94,7 @@ const Countries = () =>{
                             checked={selectedRadio === item} 
                             value={item} id={item} 
                             onClick={(e)=>{
-                                if(selectedRadio === e.target.value){ 
-                                    setselectedRadio("") 
-                                }
-                                else {
-                                    setselectedRadio(e.target.value) 
-                                }
+                                handleClick(e)
                             }}/>
                             <label htmlFor={item}>{item}</label>
                         </p>
