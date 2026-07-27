@@ -1,8 +1,9 @@
 import { useRef } from "react"
-import type { country } from "../../utils/type"
+import type { Country } from "../../utils/type"
 import styled from "styled-components"
 import colors from "../../utils/colors"
 import { Link } from "react-router-dom"
+import * as isoCountries from "i18n-iso-countries"
 
 const Container = styled.div`
     height: 120px;
@@ -46,7 +47,7 @@ const FlagCountry = styled.img`
     border-radius: 10px;
 `
 
-  const Dialogontainer = styled.dialog`
+const Dialogontainer = styled.dialog`
     padding: 16px;
     border: 1px solid #000;
     width: 300px;
@@ -58,7 +59,7 @@ const FlagCountry = styled.img`
   
   `
 
-  const ClosedModalButton = styled.button`
+const ClosedModalButton = styled.button`
       width: 120px;
       height: 40px;
       font-size: 18px;
@@ -70,72 +71,105 @@ const FlagCountry = styled.img`
       margin-left: 170px;
   `
 
-const Card = ({country}: {country : country}) =>{
-      const dialog = useRef<HTMLDialogElement>(null)
-    
-      const openHandler = () => {
+const Card = ({ country }: { country: Country }) => {
+    const dialog = useRef<HTMLDialogElement>(null)
+
+    const openHandler = () => {
         dialog.current?.showModal()
-      }
-    
-      const closeHandler = () => {
+    }
+
+    const closeHandler = () => {
         dialog.current?.close()
-      }
-    const {fra} = country.translations
-    const {svg} = country.flags
+    }
+
+    const countryName = country.names?.native?.fra?.common
+        ?? country.names?.official
+        ?? "Nom inconnu"
+
+    const officialName = country.names?.native?.fra?.official
+        ?? country.names?.official
+        ?? "Nom inconnu"
+
+    const capitalNames = country.capitals?.map((capital) => capital.name).filter(Boolean).join(", ") ?? "Non renseignée"
+    const flagUrl = country.flag?.url_svg ?? ""
+    const region = country.region ?? "Non renseigné"
+    const population = country.population?.toLocaleString() ?? "N/A"
+    const area = country.area.kilometers
+    const demonym = (country.demonyms?.fra?.m ?? country.demonyms?.eng?.m ?? "N/A") + " / " + (country.demonyms?.fra?.f ?? country.demonyms?.eng?.f ?? "N/A")
+    const languages = Array.isArray(country.languages)
+        ? country.languages.map((language) => language?.name).filter((name): name is string => Boolean(name)).join(", ")
+        : Object.values(country.languages ?? {}).filter((value): value is string => typeof value === "string").join(", ")
+    const callingCodes = country.calling_codes?.length > 0 ? country.calling_codes.join(", ") : "N/A"
+    const subRegion = country.subregion ?? "Non renseigné"
+    const units = (country.units.measurement_system ?? "N/A") + " / " + (country.units.temperature_scale ?? "N/A")
+    const currency = country.currencies?.map((currency) => currency.name).filter(Boolean).join(", ") ?? "Non renseignée"
+    const code_alpha2 = country.codes?.alpha2 ?? "N/A"
+    const code_alpha3 = country.codes?.alpha3 ?? "N/A"
+    const link = `https://www.google.com/maps/search/?api=1&query=${countryName}`
+    const regionNamesFr = new Intl.DisplayNames(['fr'], { type: 'region' });
+    const bordersNames = country.borders
+        ?.map(border => {
+            const alpha2 = isoCountries.alpha3ToAlpha2(border);
+            return alpha2 ? regionNamesFr.of(alpha2) : border;
+        })
+        .filter(Boolean);
+
+    const borders = bordersNames?.length > 0 ? bordersNames.join(", ") : "N/A";
+    const memberships = Object.entries(country.memberships ?? {}).filter(([, value]) => value).map(([key]) => key).join(", ") || "N/A"
     return (
         <Container onClick={openHandler}>
             <CountryInfo>
-                <p>{fra.common}</p>
-               
-                    {country.capital.map((item)=>{
-                        return <p>{item}</p>
-                    })
-                }
-             
-                <p>{country.region}</p>
-                <p>{country.population.toLocaleString()}</p>
+                <p>{countryName}</p>
+
+                <p>{capitalNames}</p>
+
+                <p>{region}</p>
+                <p>{population}</p>
             </CountryInfo>
-            
-            <FlagCountry src={svg} alt="erreur" />
+
+            {flagUrl && <FlagCountry src={flagUrl} alt={`Drapeau de ${countryName}`} />}
             <>
-            <Dialogontainer ref={dialog} onBlur={closeHandler}>
-                <img src={country.flags.svg} alt="Drapeau"
-                    style={
-                        {
-                            width: "120px",
-                            height: "90px",
-                            marginLeft: "90px"
+                <Dialogontainer ref={dialog} onBlur={closeHandler}>
+                    <img src={flagUrl} alt="Drapeau"
+                        style={
+                            {
+                                width: "120px",
+                                height: "90px",
+                                marginLeft: "90px"
+                            }
                         }
-                    }
-                />
-                <p><strong>Nom : </strong>{country.translations.fra.common} </p>
-                <p><strong>Capital : </strong>{country.capital?.join(", ")}</p>
-                <p><strong>Population : </strong>{country.population.toLocaleString()} habitants</p>
-                <p><strong>Continent :</strong>{country.region}</p>
-                <p><strong>Habitants: </strong>{country.demonyms.fra.f}</p>
-                <p><strong>superficie: </strong>{country.area.toLocaleString()} km²</p>
-                <p><strong>Code téléphonique: </strong>
-                {
-                    country.idd.suffixes.reduce(
-                        (acc: string[], currentVal: string) =>{
-                           acc.push(`${country.idd.root}${currentVal}`)
-                           return acc
-                }, []).join(", ")}</p>
-                <p><strong>Langues officielles: </strong>{Object.values(country.languages).join(',')}</p>
-                <Link style={
-                    {
-                        all: 'unset',
-                        fontSize: "18px",
-                        color: colors.logo,
-                        textDecoration: "underline",
-                        cursor: "pointer"
-                    }
-                } to={country.maps.googleMaps} target="blanc">Regarder sur la map</Link><br /><br />
-                <ClosedModalButton onClick={closeHandler} type="button">
-                Fermer
-                </ClosedModalButton>
-            </Dialogontainer>
-        </>
+                    />
+                    <p><strong>Nom : </strong>{countryName} </p>
+                    <p><strong>Nom officiel : </strong>{officialName}</p>
+                    <p><strong>Capital : </strong>{capitalNames}</p>
+                    <p><strong>Population : </strong>{population} habitants</p>
+                    <p><strong>Continent :</strong>{region}</p>
+                    <p><strong>Habitants: </strong>{demonym}</p>
+                    <p><strong>superficie: </strong>{area} km²</p>
+                    <p><strong>Code téléphonique: </strong> +{callingCodes}</p>
+                    <p><strong>Langues officielles: </strong>{languages || "Non renseignées"}</p>
+                    <Link style={
+                        {
+                            all: 'unset',
+                            fontSize: "18px",
+                            color: colors.logo,
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                        }
+                    } to={link} target="_blank">Regarder sur la map</Link><br /><br />
+                    <p><strong>Monnaie: </strong>{currency}</p>
+                    <p><strong>Code alpha2: </strong>{code_alpha2}</p>
+                    <p><strong>Code alpha3: </strong>{code_alpha3}</p>
+                    <p><strong>Région: </strong>{subRegion}</p>
+                    <p><strong>Unités: </strong>{units}</p>
+                    <p><strong>Pays frontaliers: </strong>{borders}</p>
+                    <p><strong>Appartenance: </strong>{memberships}</p>
+
+                    <ClosedModalButton onClick={closeHandler} type="button">
+                        Fermer
+                    </ClosedModalButton>
+                </Dialogontainer>
+            </>
         </Container>
     )
 }
