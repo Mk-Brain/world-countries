@@ -1,37 +1,12 @@
 import LogoImg from '../../assets/react.svg'
 import World from '../../assets/main.jpg'
-import styled from 'styled-components'
 import colors from '../../utils/colors'
-
-const LogoContainer = styled.div`
-    width: 200px;
-    height: 60px;
-    border-radius: 12px;
-    overflow: hidden;
-    justify-items: center;
-    margin: 0 auto;
-    
-`
-
-const BackgroundImg = styled.img`
-    width: 200px;
-    height: 60px;
-    
-`
-const ForgroudContainer = styled.span`
-    position: absolute;
-    display: flex;
-    top: 0px;
-    margin-left: 16px;
-    gap: 8px;
-`
-
 
 
 const Logo = ()=>{
     return(
-        <LogoContainer>
-            <ForgroudContainer>
+        <div className="w-1/5 h-12 rounded-lg overflow-hidden flex items-center justify-center mx-auto">
+            <span className="flex flex-row items-center justify-center gap-2 absolute">
                 <img src={LogoImg} alt="Logo" />
                 <p style={
                     {
@@ -40,9 +15,9 @@ const Logo = ()=>{
                         fontWeight: "bold"
                     }
                 }>react World</p>
-            </ForgroudContainer>
-            <BackgroundImg src={World}/>
-        </LogoContainer>
+            </span>
+            <img src={World} className="w-full h-full object-cover" />
+        </div>
     )
 }
 

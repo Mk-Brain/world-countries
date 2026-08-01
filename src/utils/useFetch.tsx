@@ -1,33 +1,39 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
-function useFetch(url : string){
+
+function useFetch(url: string) {
     const [countries, setCountries] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
-    useEffect(()=>{
-        function getCountries(url : string){
-            fetch(url).then(
-                (response)=>{
-                    return response.json().then(
-                        (data)=>setCountries(data)
-                    )
-                }
-            )
-        }
-        async function changeState(){
+    useEffect(() => {
+        const api = axios.create({ baseURL: url });
+
+        api.interceptors.request.use((config) => {
+            const token = import.meta.env.VITE_API_KEY
+            if (token) {
+                config.headers.set("Authorization", `Bearer ${token}`);
+            }
+            return config;
+        });
+        async function changeState() {
             setIsLoading(false)
         }
+        api
+      .get(`q=stan&limit=5&pretty=1response_fields=name,capital,area,flags,region,languages,population,idd,demonyms`)
+      .then((reponse) => {
+        setCountries(reponse.data);
+      })
+      .catch((err) => {
+        console.log(">>>>>>>>>>>>>>>>>> " + err);
+      })
+      .finally(() => {
+        console.log("fin");
+      });
+        
 
-        try {
-                getCountries(url)
-            } catch (error) {
-                alert(error)
-            }finally{
-                changeState()
-            }
-        
-        
-    },[url])
+
+    }, [url])
 
     return { countries, isLoading }
 
