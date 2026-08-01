@@ -1,18 +1,15 @@
-import styled from 'styled-components'
+
 import Countries from "../../components/Countries"
 import Logo from "../../components/Logo"
 
-const Container = styled.div`
-    width: 80%;
-    margin: 0 auto
-`
+
 
 const HomePage = () =>{
     return(
-        <Container>
+        <div className="px-16 py-4 flex flex-col items-center justify-center gap-4">
         <Logo/>
         <Countries/>
-        </Container>
+        </div>
     )
 }
 
